@@ -53,3 +53,11 @@ BillCraft runs as two services: an Express API and a static React frontend. Both
 - `VITE_API_PROXY_TARGET` is for the local Vite development server only; production requests use `VITE_API_BASE_URL`.
 
 `backend/.env.example` and `frontend/BillCraft/.env.example` list the available variables without credentials.
+
+### Provider configuration
+
+- **Render:** use the root `render.yaml` Blueprint. After the services are created, set the API's `CORS_ORIGIN` to the static-site URL and the frontend's `VITE_API_BASE_URL` to the API URL, then redeploy the frontend.
+- **Railway:** create one service with root directory `backend/` and another with root directory `frontend/BillCraft/`. Each directory contains a `railway.toml`; set the same API/frontend URL variables in the service settings.
+- **AWS:** run the backend as a Node.js Elastic Beanstalk application from `backend/` (the `Procfile` starts the API). Build the frontend with `VITE_API_BASE_URL` set, create the private S3/CloudFront frontend from `deploy/aws/frontend-cloudfront.template.json`, and upload `dist/` to its bucket. Set `CORS_ORIGIN` to the CloudFront URL.
+
+These files describe deployment configuration only; cloud resources and secrets must be created in the selected provider account. For AWS, invalidate the CloudFront cache after uploading a new build.
